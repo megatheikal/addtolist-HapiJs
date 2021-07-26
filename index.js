@@ -16,7 +16,7 @@ const init = async () => {
     {
       plugin: require("hapi-pgsql"),
       options: {
-        database_url: process.env.DATABASE_URL
+        database_url: process.env.DB_URL
       }
     },
     {
