@@ -15,7 +15,6 @@
     "env2": "^2.2.2",
     "hapi-auto-route": "^3.0.4",
     "hapi-pgsql": "^1.0.0",
-    "hapi-pino": "^8.3.0",
-    "pg-escape": "^0.2.0"
+    "hapi-pino": "^8.3.0"
   }
 }
