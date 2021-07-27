@@ -4,16 +4,34 @@
 
 const Hapi = require("@hapi/hapi");
 const env = require("env2")("env.json");
+const Pack = require("./package.json");
 
 const init = async () => {
   const server = Hapi.server({
     port: 3000,
-    host: "localhost"
+    host: "localhost",
+    debug: { request: ["error"] }
   });
 
+  //authentication using jwt
+  await server.register(require("hapi-auth-jwt2"));
+  server.auth.strategy("jwt", "jwt", {
+    key: process.env.JWT_SECRET,
+    validate: require("./util/jwtValidate")
+  });
+  server.auth.default("jwt");
+
+  const swaggerOptions = {
+    info: {
+      title: "Todo API Documentation",
+      version: Pack.version
+    }
+  };
   //register postgresql into hapi server
   //use hapi auto route to help directory
   await server.register([
+    { plugin: require("@hapi/inert") },
+    { plugin: require("@hapi/vision") },
     {
       plugin: require("hapi-pgsql"),
       options: {
@@ -21,10 +39,14 @@ const init = async () => {
       }
     },
     {
-      plugin: require("hapi-auto-route"),
+      plugin: require("hapi-router"),
       options: {
-        routes_dir: Path.join(__dirname, "routes")
+        routes: "routes/.*js"
       }
+    },
+    {
+      plugin: require("hapi-swagger"),
+      options: swaggerOptions
     },
     {
       plugin: require("hapi-pino"),

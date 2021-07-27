@@ -13,7 +13,7 @@ module.exports = async function(decoded, request, h) {
   return {
     isValid: true,
     credentials: {
-      scope: findSessionID.rows[0].user_type,
+      scope: findSessionID.rows[0].user_scope,
       username: findSessionID.rows[0].username
     }
   };

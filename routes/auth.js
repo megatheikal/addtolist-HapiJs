@@ -10,6 +10,8 @@ module.exports = [
     method: "POST",
     path: "/login",
     options: {
+      description: "Login with username and password",
+      tags: ["api", " auth"],
       auth: false,
       validate: {
         payload: Joi.object({
@@ -57,6 +59,8 @@ module.exports = [
     method: "POST",
     path: "/register",
     options: {
+      description: "Register a new user",
+      tags: ["api", "auth"],
       auth: false,
       validate: {
         payload: Joi.object({

@@ -6,20 +6,32 @@ module.exports = [
     method: "GET",
     path: "/todos",
     options: {
+      description: "List all todos",
+      tags: ["api", "todo"],
       auth: {
         scope: ["admin"]
+      },
+      validate: {
+        headers: Joi.object({
+          authorization: Joi.string().required()
+        }).unknown()
+      },
+      handler: async (request, h) => {
+        const todos = await request.pgsql.query(`SELECT * FROM todo`);
+        return todos.rows;
       }
-    },
-    handler: async (request, h) => {
-      const todos = await request.pgsql.query(`SELECT * FROM todo`);
-      return todos.rows;
     }
   },
   {
     methods: "GET",
     path: "/todo/{todo_id}",
     options: {
+      description: "Get a specific todo",
+      tags: ["api", "todo"],
       validate: {
+        headers: Joi.object({
+          authorization: Joi.string().required()
+        }).unknown(),
         params: Joi.object({
           todo_id: Joi.number()
             .integer()
@@ -39,7 +51,12 @@ module.exports = [
     methods: "PUT",
     path: "/todo",
     options: {
+      description: "Put a new todo",
+      tags: ["api", "todo"],
       validate: {
+        headers: Joi.object({
+          authorization: Joi.string().required()
+        }).unknown(),
         params: Joi.object({
           todo_id: Joi.string().required()
         })
@@ -57,7 +74,12 @@ module.exports = [
     methods: "POST",
     path: "/todo/{todo_id}",
     options: {
+      description: "Update the completed status of todo",
+      tags: ["api", "todo"],
       validate: {
+        headers: Joi.object({
+          authorization: Joi.string().required()
+        }).unknown(),
         params: Joi.object({
           todo_id: Joi.number()
             .integer()
@@ -80,7 +102,12 @@ module.exports = [
     methods: "DELETE",
     path: "/todo/{todo_id}",
     options: {
+      description: "Delete todo",
+      tags: ["api", "todo"],
       validate: {
+        headers: Joi.object({
+          authorization: Joi.string().required()
+        }).unknown(),
         params: Joi.object({
           todo_id: Joi.number()
             .integer()
