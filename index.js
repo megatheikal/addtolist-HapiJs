@@ -55,6 +55,13 @@ const init = async () => {
         prettyPrint: true,
         level: "debug"
       }
+    },
+    {
+      plugin: require("hapi-redis2"),
+      options: {
+        settings: "redis://127.0.0.1:6379/2",
+        decorate: true
+      }
     }
   ]);
 
