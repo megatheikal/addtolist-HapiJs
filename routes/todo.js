@@ -1,126 +1,120 @@
-"use strict";
-const Joi = require("@hapi/joi");
+'use strict'
+const Joi = require('@hapi/joi')
 
 module.exports = [
   {
-    method: "GET",
-    path: "/todos",
+    method: 'GET',
+    path: '/todos',
     options: {
-      description: "List all todos",
-      tags: ["api", "todo"],
+      description: 'List all todos',
+      tags: ['api', 'todo'],
       auth: {
-        scope: ["admin"]
+        scope: ['admin'],
       },
       validate: {
         headers: Joi.object({
-          authorization: Joi.string().required()
-        }).unknown()
+          authorization: Joi.string().required(),
+        }).unknown(),
       },
       handler: async (request, h) => {
-        const todos = await request.pgsql.query(`SELECT * FROM todo`);
-        return todos.rows;
-      }
-    }
+        const todos = await request.pgsql.query(`SELECT * FROM todo`)
+        return todos.rows
+      },
+    },
   },
   {
-    methods: "GET",
-    path: "/todo/{todo_id}",
+    methods: 'GET',
+    path: '/todo/{todo_id}',
     options: {
-      description: "Get a specific todo",
-      tags: ["api", "todo"],
+      description: 'Get a specific todo',
+      tags: ['api', 'todo'],
       validate: {
         headers: Joi.object({
-          authorization: Joi.string().required()
+          authorization: Joi.string().required(),
         }).unknown(),
         params: Joi.object({
-          todo_id: Joi.number()
-            .integer()
-            .required()
-        })
-      }
+          todo_id: Joi.number().integer().required(),
+        }),
+      },
     },
     handler: async (request, h) => {
       const todos = await request.pgsql.query(
         `SELECT * FROM todo WHERE todo_id = %1 LIMIT 1`,
         [request.params.todo_id]
-      );
-      return todos.rows[0];
-    }
+      )
+      return todos.rows[0]
+    },
   },
   {
-    methods: "PUT",
-    path: "/todo",
+    methods: 'PUT',
+    path: '/todo',
     options: {
-      description: "Put a new todo",
-      tags: ["api", "todo"],
+      description: 'Put a new todo',
+      tags: ['api', 'todo'],
       validate: {
         headers: Joi.object({
-          authorization: Joi.string().required()
+          authorization: Joi.string().required(),
         }).unknown(),
         params: Joi.object({
-          todo_id: Joi.string().required()
-        })
-      }
+          todo_id: Joi.string().required(),
+        }),
+      },
     },
     handler: async (request, h) => {
       const todos = await request.pgsql.query(
         `INSERT INTO todo ("todo_title") values ($1) RETURNING *;`,
         [request.payload.todo_title]
-      );
-      return todos.rows[0];
-    }
+      )
+      return todos.rows[0]
+    },
   },
   {
-    methods: "POST",
-    path: "/todo/{todo_id}",
+    methods: 'POST',
+    path: '/todo/{todo_id}',
     options: {
-      description: "Update the completed status of todo",
-      tags: ["api", "todo"],
+      description: 'Update the completed status of todo',
+      tags: ['api', 'todo'],
       validate: {
         headers: Joi.object({
-          authorization: Joi.string().required()
+          authorization: Joi.string().required(),
         }).unknown(),
         params: Joi.object({
-          todo_id: Joi.number()
-            .integer()
-            .required()
+          todo_id: Joi.number().integer().required(),
         }),
         payload: Joi.object({
-          completed: Joi.boolean().required()
-        })
-      }
+          completed: Joi.boolean().required(),
+        }),
+      },
     },
     handler: async (request, h) => {
       const todos = await request.pgsql.query(
         `UPDATE public.todo SET "completed" = $1 WHERE todo_id = $2 RETURNING *`,
         [request.payload.completed, request.params.todo_id]
-      );
-      return todos.rows[0];
-    }
+      )
+      return todos.rows[0]
+    },
   },
   {
-    methods: "DELETE",
-    path: "/todo/{todo_id}",
+    methods: 'DELETE',
+    path: '/todo/{todo_id}',
     options: {
-      description: "Delete todo",
-      tags: ["api", "todo"],
+      description: 'Delete todo',
+      tags: ['api', 'todo'],
       validate: {
         headers: Joi.object({
-          authorization: Joi.string().required()
+          authorization: Joi.string().required(),
         }).unknown(),
         params: Joi.object({
-          todo_id: Joi.number()
-            .integer()
-            .required()
-        })
-      }
+          todo_id: Joi.number().integer().required(),
+        }),
+      },
     },
     handler: async (request, h) => {
       const todos = await request.pgsql.query(
         `DELETE FROM todo where todo_id $1`,
         [request.params.todo_id]
-      );
-      return { deleted: todos.rowCount == 1 };
-    }
-  }
-];
+      )
+      return { deleted: todos.rowCount == 1 }
+    },
+  },
+]
