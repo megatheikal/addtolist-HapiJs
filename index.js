@@ -1,5 +1,5 @@
-//initialize hapi server
-//contains detail of port number and host information
+// initialize hapi server
+// contains detail of port number and host information
 'use strict'
 
 const Hapi = require('@hapi/hapi')
@@ -13,7 +13,7 @@ const init = async () => {
     debug: { request: ['error'] },
   })
 
-  //authentication using jwt
+  // authentication using jwt
   await server.register(require('hapi-auth-jwt2'))
   server.auth.strategy('jwt', 'jwt', {
     key: process.env.JWT_SECRET,
@@ -27,8 +27,8 @@ const init = async () => {
       version: Pack.version,
     },
   }
-  //register postgresql into hapi server
-  //use hapi auto route to help directory
+  // register postgresql into hapi server
+  // use hapi auto route to help directory
   await server.register([
     { plugin: require('@hapi/inert') },
     { plugin: require('@hapi/vision') },
